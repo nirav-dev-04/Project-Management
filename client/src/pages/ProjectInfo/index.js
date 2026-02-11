@@ -25,7 +25,7 @@ function ProjectInfo() {
       if (response.success) {
         setProject(response.data);
         const currentUser = response.data.members.find(
-          (member) => member.user._id === user._id
+          (member) => member.user._id === user._id,
         );
         setCurrentUserRole(currentUser.role);
       } else {
@@ -43,7 +43,7 @@ function ProjectInfo() {
 
   return (
     project && (
-      <div>
+      <div className="fade-in">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-primary text-2xl font-semibold uppercase">
@@ -61,18 +61,18 @@ function ProjectInfo() {
           </div>
           <div>
             <div className="flex gap-5">
-              <span className="text-gray-600 text-sm font-semibold">
+              <span className="text-secondary text-sm font-semibold">
                 Created At
               </span>
-              <span className="text-gray-600 text-sm">
+              <span className="text-secondary text-sm">
                 {getDateFormat(project.createdAt)}
               </span>
             </div>
             <div className="flex gap-5">
-              <span className="text-gray-600 text-sm font-semibold">
+              <span className="text-secondary text-sm font-semibold">
                 Created By
               </span>
-              <span className="text-gray-600 text-sm">
+              <span className="text-secondary text-sm">
                 {project.owner.firstName} {project.owner.lastName}
               </span>
             </div>

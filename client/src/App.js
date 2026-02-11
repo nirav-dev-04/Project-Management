@@ -7,6 +7,9 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ProjectInfo from "./pages/ProjectInfo";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import ProjectNew from "./pages/ProjectNew";
 
 function App() {
   const { loading } = useSelector((state) => state.loaders);
@@ -15,8 +18,9 @@ function App() {
       {loading && <Spinner />}
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Register />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedPage>
                 <Home />
@@ -32,6 +36,14 @@ function App() {
             }
           />
           <Route
+            path="/project/new"
+            element={
+              <ProtectedPage>
+                <ProjectNew />
+              </ProtectedPage>
+            }
+          />
+          <Route
             path="/profile"
             element={
               <ProtectedPage>
@@ -41,6 +53,8 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -6,7 +6,7 @@ import { GetLoggedInUser } from "../apicalls/users";
 import { SetNotifications, SetUser } from "../redux/usersSlice";
 import { SetLoading } from "../redux/loadersSlice";
 import { GetAllNotifications } from "../apicalls/notifications";
-import { Avatar, Badge, Space } from "antd";
+import { Avatar, Badge } from "antd";
 import Notifications from "./Notifications";
 
 function ProtectedPage({ children }) {
@@ -14,6 +14,7 @@ function ProtectedPage({ children }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, notifications } = useSelector((state) => state.users);
+
   const getUser = async () => {
     try {
       dispatch(SetLoading(true));
@@ -28,7 +29,7 @@ function ProtectedPage({ children }) {
       dispatch(SetLoading(false));
       message.error(error.message);
       localStorage.removeItem("token");
-      navigate("/login");
+      navigate("/register");
     }
   };
 
@@ -64,40 +65,32 @@ function ProtectedPage({ children }) {
 
   return (
     user && (
-      <div>
-        <div className="flex justify-between items-center bg-primary text-white px-5 py-4">
-          <h1 className="text-2xl cursor-pointer" onClick={() => navigate("/")}>
-            Zoe-Tracker
+      <div className="app-layout">
+        {/* Top Navigation */}
+        <div className="topbar">
+          <h1 className="logo" onClick={() => navigate("/")}>
+            WorkZen
           </h1>
 
-          <div className="flex items-center bg-white px-5 py-2 rounded">
-            <span
-              className=" text-primary cursor-pointer underline mr-2"
-              onClick={() => navigate("/profile")}
-            >
+          <div className="topbar-right">
+            <span className="user-name" onClick={() => navigate("/profile")}>
               {user?.firstName}
             </span>
+
             <Badge
-              count={
-                notifications.filter((notification) => !notification.read)
-                  .length
-              }
-              className="cursor-pointer"
+              count={notifications.filter((n) => !n.read).length}
+              className="notification-icon"
             >
               <Avatar
                 shape="square"
                 size="large"
-                icon={
-                  <i className="ri-notification-line text-white rounded-full"></i>
-                }
-                onClick={() => {
-                  setShowNotifications(true);
-                }}
+                icon={<i className="ri-notification-line"></i>}
+                onClick={() => setShowNotifications(true)}
               />
             </Badge>
 
             <i
-              className="ri-logout-box-r-line ml-10 text-primary"
+              className="ri-logout-box-r-line logout-icon"
               onClick={() => {
                 localStorage.removeItem("token");
                 navigate("/login");
@@ -105,8 +98,11 @@ function ProtectedPage({ children }) {
             ></i>
           </div>
         </div>
-        <div className="px-5 py-3">{children}</div>
 
+        {/* Page Content */}
+        <div className="page-content fade-in">{children}</div>
+
+        {/* Notifications */}
         {showNotifications && (
           <Notifications
             showNotifications={showNotifications}

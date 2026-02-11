@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Project Management MERN
 
 [Project Management MERN](https://github.com/biswadeep-roy/Project-Management-MERN/raw/main/client/src/assets/images/project-management-mern.png)
@@ -98,3 +99,6 @@ If you have any questions or need further assistance, feel free to contact the p
 - GitHub: [https://github.com/biswadeep-roy](https://github.com/biswadeep-roy)
 
 Happy Project Management with MERN! 🚀🔧📊
+=======
+# Project-Management
+>>>>>>> 55b5b80a062db87292fac4b3fd6035dc6d8e661a

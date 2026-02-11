@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { ConfigProvider } from "antd";
 import store from "./redux/store";
 import { Provider } from "react-redux";
+import "./styles/theme.css";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
@@ -19,7 +21,7 @@ root.render(
     >
       <App />
     </ConfigProvider>
-  </Provider>
+  </Provider>,
 );
 
 reportWebVitals();

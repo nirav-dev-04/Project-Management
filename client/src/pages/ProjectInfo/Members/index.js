@@ -12,7 +12,11 @@ function Members({ project, reloadData }) {
   const { user } = useSelector((state) => state.users);
 
   const dispatch = useDispatch();
-  const isOwner = project.owner._id === user._id;
+  const userRole = project.members.find(
+    (member) => member.user._id === user._id,
+  )?.role;
+  const isOwner = userRole === "owner";
+  const isAdmin = userRole === "admin";
   const deleteMember = async (memberId) => {
     try {
       dispatch(SetLoading(true));
@@ -72,7 +76,7 @@ function Members({ project, reloadData }) {
   return (
     <div className="members-container">
       <div className="flex justify-end">
-        {isOwner && (
+        {(isOwner || isAdmin) && (
           <Button
             type="default"
             onClick={() => setShowMemberForm(true)}

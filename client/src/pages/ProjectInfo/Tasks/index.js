@@ -9,7 +9,6 @@ import TaskForm from "./TaskForm";
 import { AddNotification } from "../../../apicalls/notifications";
 import "./Tasks.css";
 
-
 function Tasks({ project }) {
   const [filters, setFilters] = useState({
     status: "all",
@@ -22,9 +21,12 @@ function Tasks({ project }) {
   const [showTaskForm, setShowTaskForm] = React.useState(false);
   const [task, setTask] = React.useState(null);
   const dispatch = useDispatch();
-  const isEmployee = project.members.find(
-    (member) => member.role === "employee" && member.user._id === user._id
-  );
+  const userRole = project.members.find(
+    (member) => member.user._id === user._id,
+  )?.role;
+  const isEmployee = userRole === "employee";
+  const isAdmin = userRole === "admin";
+  const isOwner = userRole === "owner";
 
   const getTasks = async () => {
     try {
@@ -179,7 +181,7 @@ function Tasks({ project }) {
     },
   ];
 
-  if (isEmployee) {
+  if (isEmployee || isAdmin) {
     columns.pop();
   }
 
@@ -188,7 +190,7 @@ function Tasks({ project }) {
   }, [filters]);
   return (
     <div>
-      {!isEmployee && (
+      {(isOwner || isAdmin) && (
         <div className="flex justify-end">
           <Button type="default" onClick={() => setShowTaskForm(true)}>
             Add Task

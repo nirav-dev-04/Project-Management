@@ -42,6 +42,20 @@ router.post("/get-project-by-id", authMiddleware, async (req, res) => {
     const project = await Project.findById(req.body._id)
       .populate("owner")
       .populate("members.user");
+
+    // Check if user is owner or member
+    const isOwner = project.owner._id.toString() === req.user._id.toString();
+    const isMember = project.members.some(
+      (member) => member.user._id.toString() === req.user._id.toString(),
+    );
+
+    if (!isOwner && !isMember) {
+      return res.send({
+        success: false,
+        message: "You don't have permission to view this project",
+      });
+    }
+
     res.send({
       success: true,
       data: project,
@@ -91,6 +105,16 @@ router.post("/edit-project", authMiddleware, async (req, res) => {
 
 router.post("/delete-project", authMiddleware, async (req, res) => {
   try {
+    const project = await Project.findById(req.body._id);
+
+    // Check if user is owner
+    if (project.owner._id.toString() !== req.user._id.toString()) {
+      return res.send({
+        success: false,
+        message: "Only project owner can delete the project",
+      });
+    }
+
     await Project.findByIdAndDelete(req.body._id);
     res.send({
       success: true,
@@ -140,6 +164,30 @@ router.post("/remove-member", authMiddleware, async (req, res) => {
     const { memberId, projectId } = req.body;
 
     const project = await Project.findById(projectId);
+
+    // Check if user is owner or admin
+    const isOwner = project.owner._id.toString() === req.user._id.toString();
+    const isAdmin = project.members.some(
+      (member) =>
+        member.user._id.toString() === req.user._id.toString() &&
+        member.role === "admin",
+    );
+
+    if (!isOwner && !isAdmin) {
+      return res.send({
+        success: false,
+        message: "Only project owner or admin can remove members",
+      });
+    }
+
+    // Prevent removing owner
+    if (project.owner._id.toString() === memberId) {
+      return res.send({
+        success: false,
+        message: "Cannot remove project owner",
+      });
+    }
+
     project.members.pull(memberId);
     await project.save();
 

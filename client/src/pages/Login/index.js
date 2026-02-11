@@ -20,7 +20,7 @@ function Login() {
       if (response.success) {
         localStorage.setItem("token", response.data);
         message.success(response.message);
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       } else {
         throw new Error(response.message);
       }
@@ -32,24 +32,24 @@ function Login() {
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     }
   }, []);
 
   return (
     <div className="login-container">
-      <div className="bg-primary h-screen flex flex-col justify-center items-center">
-        <div>
-          <h1 className="text-7xl text-white">Zoe-Tracker</h1>
-          <span className="text-white mt-5">
-            One place to track all your business records
+      <div className="left-side">
+        <div className="content">
+          <h1 className="title">WorkZen</h1>
+          <span className="subtitle">
+            Streamline your workflow and boost productivity
           </span>
         </div>
       </div>
-      <div className="flex justify-center items-center">
-        <div className="login-form">
-          <h1 className="login-form-title">LOGIN TO YOUR ACCOUNT</h1>
-          <Divider className="login-divider" />
+      <div className="right-side">
+        <div className="card">
+          <h1 className="card-title">LOGIN TO YOUR ACCOUNT</h1>
+          <Divider className="divider" />
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item label="Email" name="email" rules={getAntdFormInputRules}>
               <Input />

@@ -9,6 +9,28 @@ const multer = require("multer");
 
 router.post("/create-task", authMiddleware, async (req, res) => {
   try {
+    const project = await Project.findById(req.body.project);
+
+    // Check if user is owner, admin, or employee of the project
+    const isOwner = project.owner._id.toString() === req.user._id.toString();
+    const isAdmin = project.members.some(
+      (member) =>
+        member.user._id.toString() === req.user._id.toString() &&
+        member.role === "admin",
+    );
+    const isEmployee = project.members.some(
+      (member) =>
+        member.user._id.toString() === req.user._id.toString() &&
+        member.role === "employee",
+    );
+
+    if (!isOwner && !isAdmin && !isEmployee) {
+      return res.send({
+        success: false,
+        message: "You don't have permission to create tasks in this project",
+      });
+    }
+
     const newTask = new Task(req.body);
     await newTask.save();
     res.send({
@@ -67,6 +89,24 @@ router.post("/update-task", authMiddleware, async (req, res) => {
 
 router.post("/delete-task", authMiddleware, async (req, res) => {
   try {
+    const task = await Task.findById(req.body._id).populate("project");
+
+    // Check if user is owner or admin of the project
+    const isOwner =
+      task.project.owner._id.toString() === req.user._id.toString();
+    const isAdmin = task.project.members.some(
+      (member) =>
+        member.user._id.toString() === req.user._id.toString() &&
+        member.role === "admin",
+    );
+
+    if (!isOwner && !isAdmin) {
+      return res.send({
+        success: false,
+        message: "Only project owner or admin can delete tasks",
+      });
+    }
+
     await Task.findByIdAndDelete(req.body._id);
     res.send({
       success: true,
@@ -103,7 +143,7 @@ router.post(
           $push: {
             attachments: imageURL,
           },
-        }
+        },
       );
 
       res.send({
@@ -117,7 +157,7 @@ router.post(
         message: error.message,
       });
     }
-  }
+  },
 );
 
 module.exports = router;

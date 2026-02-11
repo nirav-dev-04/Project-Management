@@ -35,62 +35,89 @@ function Home() {
   }, []);
 
   return (
-    <div className="dashboard">
+    <div className="fade-in">
       {/* Header */}
-      <div className="dashboard-header">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div>
-          <h2>
-            Welcome, {user?.firstName} {user?.lastName}
-          </h2>
-          <p className="dashboard-subtitle">Manage your projects efficiently</p>
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Welcome back to WorkZen, {user?.firstName}!
+          </h1>
+          <p className="text-secondary text-lg">
+            Manage your projects efficiently
+          </p>
         </div>
 
         <button
-          className="create-project-btn"
+          className="btn btn-primary flex items-center gap-2 hover:scale-105 transition-transform"
           onClick={() => navigate("/project/new")}
         >
-          + Create Project
+          <span>+</span>
+          Create Project
         </button>
       </div>
 
       {/* Projects Section */}
-      <div className="project-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.length > 0 ? (
           projects.map((project) => (
             <div
               key={project._id}
-              className="project-card"
+              className="card cursor-pointer hover:shadow-lg transition-all duration-300"
               onClick={() => navigate(`/project/${project._id}`)}
             >
-              <div className="project-card-header">
-                <h3>{project.name}</h3>
-                <span className={`status ${project.status}`}>
+              <div className="card-header">
+                <h3 className="card-title text-xl">{project.name}</h3>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    project.status === "active"
+                      ? "bg-success text-white"
+                      : project.status === "completed"
+                        ? "bg-primary text-white"
+                        : "bg-warning text-white"
+                  }`}
+                >
                   {project.status}
                 </span>
               </div>
 
-              <Divider />
-
-              <div className="project-info">
-                <p>
-                  <strong>Owner:</strong> {project.owner.firstName}
-                </p>
-                <p>
-                  <strong>Created:</strong> {getDateFormat(project.createdAt)}
-                </p>
+              <div className="card-content space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-secondary">
+                    Owner:
+                  </span>
+                  <span className="text-sm text-primary">
+                    {project.owner.firstName}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-secondary">
+                    Created:
+                  </span>
+                  <span className="text-sm text-primary">
+                    {getDateFormat(project.createdAt)}
+                  </span>
+                </div>
               </div>
             </div>
           ))
         ) : (
-          <div className="empty-state">
-            <h3>No projects yet</h3>
-            <p>Create your first project to get started.</p>
-            <button
-              className="create-project-btn"
-              onClick={() => navigate("/project/new")}
-            >
-              Create Project
-            </button>
+          <div className="col-span-full flex flex-col items-center justify-center py-16 px-4">
+            <div className="text-center">
+              <div className="text-6xl mb-4">📋</div>
+              <h3 className="text-2xl font-semibold text-primary mb-2">
+                No projects yet
+              </h3>
+              <p className="text-secondary mb-6 max-w-md">
+                Create your first project to get started with project
+                management.
+              </p>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate("/project/new")}
+              >
+                Create Your First Project
+              </button>
+            </div>
           </div>
         )}
       </div>

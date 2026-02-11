@@ -40,18 +40,18 @@ function Register() {
     <div className="register-container">
       <div className="bg-primary-gradient h-screen flex flex-col justify-center items-center">
         <div>
-          <h1 className="text-7xl text-white">Project Management</h1>
+          <h1 className="text-7xl text-white">WorkZen</h1>
           <span className="text-white mt-5">
-            Please register your account to use our services.
+            Join thousands of professionals managing projects efficiently.
           </span>
         </div>
       </div>
       <div className="flex justify-center items-center">
-        <div className="w-[420px]">
-          <h1 className="text-2xl text-gray-700 uppercase">
+        <div className="card p-8 w-full max-w-md">
+          <h1 className="text-2xl font-bold text-center mb-6 text-primary">
             Let's get you started
           </h1>
-          <Divider />
+          <Divider className="mb-6" />
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="First Name"

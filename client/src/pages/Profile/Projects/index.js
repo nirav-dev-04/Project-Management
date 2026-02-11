@@ -6,7 +6,6 @@ import { DeleteProject, GetAllProjects } from "../../../apicalls/projects";
 import { SetLoading } from "../../../redux/loadersSlice";
 import { getDateFormat } from "../../../utils/helpers";
 import ProjectForm from "./ProjectForm";
-import "./Projects.css"; // Import the CSS file for styling
 
 function Projects() {
   const [selectedProject, setSelectedProject] = React.useState(null);
@@ -56,37 +55,67 @@ function Projects() {
     {
       title: "Name",
       dataIndex: "name",
+      render: (text) => (
+        <span className="font-medium text-primary">{text}</span>
+      ),
     },
     {
       title: "Description",
       dataIndex: "description",
+      render: (text) => (
+        <span className="text-secondary text-sm">
+          {text && text.length > 50
+            ? `${text.substring(0, 50)}...`
+            : text || "No description"}
+        </span>
+      ),
     },
     {
       title: "Status",
       dataIndex: "status",
-      render: (text) => text.toUpperCase(),
+      render: (text) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            text === "active"
+              ? "bg-success text-white"
+              : text === "completed"
+                ? "bg-primary text-white"
+                : "bg-warning text-white"
+          }`}
+        >
+          {text.toUpperCase()}
+        </span>
+      ),
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
-      render: (text) => getDateFormat(text),
+      render: (text) => (
+        <span className="text-secondary text-sm">{getDateFormat(text)}</span>
+      ),
     },
     {
-      title: "Action",
+      title: "Actions",
       dataIndex: "action",
       render: (text, record) => (
-        <div className="projects-action-icons">
-          <i
-            className="ri-delete-bin-line"
-            onClick={() => onDelete(record._id)}
-          ></i>
-          <i
-            className="ri-pencil-line"
+        <div className="flex items-center gap-3">
+          <button
+            className="btn btn-ghost btn-sm text-secondary hover:text-primary"
             onClick={() => {
               setSelectedProject(record);
               setShow(true);
             }}
-          ></i>
+            title="Edit project"
+          >
+            <i className="ri-pencil-line"></i>
+          </button>
+          <button
+            className="btn btn-ghost btn-sm text-secondary hover:text-error"
+            onClick={() => onDelete(record._id)}
+            title="Delete project"
+          >
+            <i className="ri-delete-bin-line"></i>
+          </button>
         </div>
       ),
     },
@@ -106,7 +135,11 @@ function Projects() {
           Add Project
         </Button>
       </div>
-      <Table columns={columns} dataSource={projects} className="projects-table" />
+      <Table
+        columns={columns}
+        dataSource={projects}
+        className="projects-table"
+      />
       {show && (
         <ProjectForm
           show={show}

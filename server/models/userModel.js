@@ -20,8 +20,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    resetToken: {
+      type: String,
+    },
+    resetTokenExpiry: {
+      type: Date,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("users", userSchema);

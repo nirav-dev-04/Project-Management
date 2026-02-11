@@ -1,102 +1,59 @@
-import { message, Modal } from "antd";
-import moment from "moment";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  DeleteAllNotifications,
-  MarkNotificationAsRead,
-} from "../apicalls/notifications";
-import { SetLoading } from "../redux/loadersSlice";
-import { SetNotifications } from "../redux/usersSlice";
 
-function Notifications({ showNotifications, setShowNotifications }) {
-  const { notifications } = useSelector((state) => state.users);
+function Notifications({ reloadNotifications }) {
+  const { notifications } = useSelector((state) => state.notifications);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const readNotifications = async () => {
+
+  const readNotification = async (notification) => {
     try {
-      const response = await MarkNotificationAsRead();
-      if (response.success) {
-        console.log(response.data);
-        dispatch(SetNotifications(response.data));
-      }
+      // mark as read
+      // reload notifications
     } catch (error) {
-      message.error(error.message);
+      console.log(error);
     }
   };
-
-  const deleteAllNotifications = async () => {
-    try {
-      dispatch(SetLoading(true));
-      const response = await DeleteAllNotifications();
-      dispatch(SetLoading(false));
-      if (response.success) {
-        dispatch(SetNotifications([]));
-      } else {
-        throw new Error(response.message);
-      }
-    } catch (error) {
-      dispatch(SetLoading(false));
-      message.error(error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (notifications.length > 0) {
-      readNotifications();
-    }
-  }, [notifications]);
 
   return (
-    <Modal
-      title="NOTIFICATIONS"
-      open={showNotifications}
-      onCancel={() => setShowNotifications(false)}
-      centered
-      footer={null}
-      width={1000}
-    >
-      <div className="flex flex-col gap-5 mt-5">
-        {notifications.length > 0 ? (
-          <div className="flex justify-end">
-            <span
-              className="text-[15px] underline cursor-pointer"
-              onClick={deleteAllNotifications}
-            >
-              Delete All
-            </span>
-          </div>
-        )
-        : (
-          <div className="flex justify-center">
-            <span className="text-[15px]">No Notifications</span>
-          </div>
-        )
-      }
-        {notifications.map((notification) => (
-          <div
-            className="flex justify-between items-end border border-solid p-2 roudned cursor-pointer"
-            onClick={() => {
-              setShowNotifications(false);
-              navigate(notification.onClick);
-            }}
-          >
-            <div className="flex flex-col">
-              <span className="text-md font-semibold  text-gray-700">
-                {notification.title}
-              </span>
-              <span className="text-sm">{notification.description}</span>
-            </div>
-            <div>
-              <span className="text-sm">
-                {moment(notification.createdAt).fromNow()}
-              </span>
-            </div>
-          </div>
-        ))}
+    <div className="notifications-panel">
+      <div className="notifications-header">
+        <h1 className="notifications-title text-primary font-semibold text-lg">
+          Notifications
+        </h1>
       </div>
-    </Modal>
+      <div className="notifications-list space-y-3">
+        {notifications?.length > 0 ? (
+          notifications.map((notification) => (
+            <div
+              className="notification-card card p-4 cursor-pointer hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary"
+              key={notification._id}
+              onClick={() => readNotification(notification)}
+            >
+              <div className="notification-content">
+                <div className="notification-title text-primary font-medium mb-1">
+                  {notification.title}
+                </div>
+                <div className="notification-description text-secondary text-sm mb-2">
+                  {notification.description}
+                </div>
+                <div className="notification-date text-muted text-xs">
+                  {new Date(notification.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+              {!notification.read && (
+                <div className="notification-unread w-2 h-2 bg-primary rounded-full ml-2"></div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8">
+            <div className="text-4xl mb-3">🔔</div>
+            <p className="text-secondary">No notifications yet</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
